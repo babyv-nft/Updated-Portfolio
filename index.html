@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Babyv - Dealflow Broker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–black: #0a0a0a;
+–off-white: #f0ede6;
+–gold: #c9a84c;
+–gold-dim: #8a6e2f;
+–gray: #3a3a3a;
+–mid: #888;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+background: var(–black);
+color: var(–off-white);
+font-family: ‘DM Mono’, ‘Courier New’, monospace;
+font-size: 14px;
+line-height: 1.7;
+overflow-x: hidden;
+cursor: crosshair;
+}
+
+nav {
+position: fixed;
+top: 0; left: 0; right: 0;
+z-index: 100;
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 24px 48px;
+border-bottom: 1px solid rgba(201,168,76,0.15);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+background: rgba(10,10,10,0.85);
+}
+
+.nav-logo {
+font-family: ‘Bebas Neue’, Impact, sans-serif;
+font-size: 22px;
+letter-spacing: 4px;
+color: var(–gold);
+text-decoration: none;
+}
+
+.nav-links { display: flex; gap: 40px; list-style: none; }
+
+.nav-links a {
+color: var(–mid);
+text-decoration: none;
+font-size: 11px;
+letter-spacing: 2px;
+text-transform: uppercase;
+transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(–gold); }
+
+.hero {
+min-height: 100vh;
+display: grid;
+grid-template-columns: 1fr 1fr;
+align-items: center;
+padding: 80px 48px 0;
+position: relative;
+overflow: hidden;
+}
+
+.hero-glow {
+position: absolute;
+top: -200px; right: -200px;
+width: 700px; height: 700px;
+background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
+pointer-events: none;
+}
+
+.hero-left { padding-right: 80px; }
+
+.hero-tag {
+font-size: 11px;
+letter-spacing: 3px;
+text-transform: uppercase;
+color: var(–gold);
+margin-bottom: 28px;
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.hero-tag-line { display: block; width: 32px; height: 1px; background: var(–gold); flex-shrink: 0; }
+
+h1 {
+font-family: ‘Bebas Neue’, Impact, sans-serif;
+font-size: clamp(72px, 9vw, 120px);
+line-height: 0.9;
+letter-spacing: 2px;
+color: var(–off-white);
+margin-bottom: 8px;
+}
+
+.h1-accent {
+font-family: ‘Playfair Display’, Georgia, serif;
+font-style: italic;
+font-size: clamp(28px, 3.5vw, 46px);
+color: var(–gold);
+display: block;
+margin-bottom: 40px;
+font-weight: 400;
+}
+
+.hero-desc { color: var(–mid); max-width: 420px; font-size: 13px; margin-bottom: 48px; line-height: 1.9; }
+.hero-desc strong { color: var(–off-white); font-weight: 400; }
+
+.cta-row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+
+.btn-primary {
+background: var(–gold);
+color: var(–black);
+text-decoration: none;
+padding: 14px 32px;
+font-family: ‘DM Mono’, ‘Courier New’, monospace;
+font-size: 11px;
+letter-spacing: 2px;
+text-transform: uppercase;
+font-weight: 400;
+transition: background 0.2s, transform 0.2s;
+cursor: pointer;
+display: inline-block;
+}
+
+.btn-primary:hover { background: var(–off-white); transform: translateY(-2px); }
+
+.btn-ghost {
+color: var(–mid);
+text-decoration: none;
+font-size: 11px;
+letter-spacing: 2px;
+text-transform: uppercase;
+display: inline-flex;
+align-items: center;
+gap: 8px;
+transition: color 0.2s;
+}
+
+.btn-ghost:hover { color: var(–off-white); }
+
+.hero-right {
+border-left: 1px solid var(–gray);
+padding-left: 80px;
+display: flex;
+flex-direction: column;
+gap: 48px;
+}
+
+.stat { opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s ease forwards; }
+.stat:nth-child(1) { animation-delay: 0.3s; }
+.stat:nth-child(2) { animation-delay: 0.5s; }
+.stat:nth-child(3) { animation-delay: 0.7s; }
+
+.stat-num {
+font-family: ‘Bebas Neue’, Impact, sans-serif;
+font-size: 56px;
+color: var(–gold);
+line-height: 1;
+letter-spacing: 2px;
+}
+
+.stat-label { font-size: 11px; color: var(–mid); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+.stat-divider { width: 40px; height: 1px; background: var(–gray); margin-top: 16px; }
+
+.scroll-hint {
+position: absolute;
+bottom: 40px; left: 50%;
+transform: translateX(-50%);
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 8px;
+color: var(–gray);
+font-size: 10px;
+letter-spacing: 2px;
+text-transform: uppercase;
+animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+0%, 100% { transform: translateX(-50%) translateY(0); }
+50% { transform: translateX(-50%) translateY(6px); }
+}
+
+.marquee-wrap {
+overflow: hidden;
+border-top: 1px solid var(–gray);
+border-bottom: 1px solid var(–gray);
+padding: 18px 0;
+background: rgba(201,168,76,0.03);
+}
+
+.marquee { display: flex; animation: marquee 20s linear infinite; white-space: nowrap; width: max-content; }
+
+.marquee-item {
+font-family: ‘Bebas Neue’, Impact, sans-serif;
+font-size: 13px;
+letter-spacing: 4px;
+color: var(–gold-dim);
+padding: 0 40px;
+display: inline-block;
+}
+
+.marquee-dot { color: var(–gold); padding: 0 4px; display: inline-block; }
+
+@keyframes marquee {
+from { transform: translateX(0); }
+to { transform: translateX(-50%); }
+}
+
+section { padding: 120px 48px; }
+
+.section-label {
+font-size: 11px;
+letter-spacing: 3px;
+text-transform: uppercase;
+color: var(–gold);
+margin-bottom: 16px;
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.section-label-line { display: block; width: 24px; height: 1px; background: var(–gold); flex-shrink: 0; }
+
+.section-title {
+font-family: ‘Bebas Neue’, Impact, sans-serif;
+font-size: clamp(40px, 5vw, 64px);
+letter-spacing: 2px;
+line-height: 1;
+color: var(–off-white);
+margin-bottom: 80px;
+}
+
+.services-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 1px;
+background: var(–gray);
+border: 1px solid var(–gray);
+}
+
+.service-card {
+background: var(–black);
+padding: 48px;
+position: relative;
+overflow: hidden;
+transition: background 0.3s;
+}
+
+.service-card-underline {
+position: absolute;
+bottom: 0; left: 0;
+width: 100%; height: 2px;
+background: var(–gold);
+transform: scaleX(0);
+transform-origin: left;
+transition: transform 0.4s ease;
+}
+
+.service-card:hover { background: #111; }
+.service-card:hover .service-card-underline { transform: scaleX(1); }
+
+.service-num {
+font-family: ‘Bebas Neue’, Impact, sans-serif;
+font-size: 80px;
+color: rgba(201,168,76,0.07);
+line-height: 1;
+position: absolute;
+top: 24px; right: 32px;
+pointer-events: none;
+}
+
+.service-icon { width: 36px; height: 36px; margin-bottom: 24px; color: var(–gold); display: block; }
+
+.service-name {
+font-family: ‘Bebas Neue’, Impact, sans-serif;
+font-size: 26px;
+letter-spacing: 2px;
+color: var(–off-white);
+margin-bottom: 16px;
+}
+
+.service-desc { color: var(–mid); font-size: 13px; line-height: 1.8; max-width: 320px; }
+
+.about { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; border-top: 1px solid var(–gray); }
+
+.about-quote {
+font-family: ‘Playfair Display’, Georgia, serif;
+font-style: italic;
+font-size: clamp(22px, 2.5vw, 32px);
+color: var(–off-white);
+line-height: 1.5;
+border-left: 2px solid var(–gold);
+padding-left: 32px;
+}
+
+.about-text { color: var(–mid); font-size: 13px; line-height: 1.9; }
+.about-text p + p { margin-top: 20px; }
+.about-text strong { color: var(–off-white); font-weight: 400; }
+
+.contact { border-top: 1px solid var(–gray); text-align: center; }
+
+.contact-title {
+font-family: ‘Bebas Neue’, Impact, sans-serif;
+font-size: clamp(48px, 7vw, 96px);
+letter-spacing: 4px;
+color: var(–off-white);
+line-height: 1;
+margin-bottom: 24px;
+}
+
+.contact-title span { color: var(–gold); }
+.contact-sub { color: var(–mid); font-size: 13px; margin-bottom: 48px; letter-spacing: 1px; }
+
+.contact-links { display: flex; justify-content: center; gap: 32px; margin-top: 64px; flex-wrap: wrap; }
+
+.contact-link {
+color: var(–mid);
+text-decoration: none;
+font-size: 11px;
+letter-spacing: 2px;
+text-transform: uppercase;
+transition: color 0.2s;
+display: inline-flex;
+align-items: center;
+gap: 8px;
+}
+
+.contact-link:hover { color: var(–gold); }
+
+footer { border-top: 1px solid var(–gray); padding: 32px 48px; display: flex; justify-content: space-between; align-items: center; }
+
+.footer-logo { font-family: ‘Bebas Neue’, Impact, sans-serif; font-size: 18px; letter-spacing: 4px; color: var(–gold-dim); }
+.footer-copy { color: var(–gray); font-size: 11px; letter-spacing: 1px; }
+
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+.fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+.hero-left { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease 0.1s, transform 0.8s ease 0.1s; }
+.hero-left.loaded { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 900px) {
+nav { padding: 20px 24px; }
+.nav-links { display: none; }
+.hero { grid-template-columns: 1fr; padding: 120px 24px 80px; }
+.hero-left { padding-right: 0; }
+.hero-right { border-left: none; border-top: 1px solid var(–gray); padding-left: 0; padding-top: 48px; flex-direction: row; flex-wrap: wrap; gap: 32px; }
+.stat-divider { display: none; }
+section { padding: 80px 24px; }
+.services-grid { grid-template-columns: 1fr; }
+.about { grid-template-columns: 1fr; gap: 48px; }
+footer { padding: 24px; flex-direction: column; gap: 16px; text-align: center; }
+.contact-links { flex-direction: column; align-items: center; }
+}
+</style>
+
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">Babyv</a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-left">
+    <div class="hero-tag">
+      <span class="hero-tag-line"></span>
+      Dealflow Broker &middot; Web3 Growth
+    </div>
+    <h1>Turning<br>Raises</h1>
+    <span class="h1-accent">into ecosystems.</span>
+    <p class="hero-desc">
+      I connect <strong>early-stage crypto projects</strong> to the VCs, launchpads, and liquidity partners they need &mdash; then stay in the trenches to make sure those deals actually land.
+    </p>
+    <div class="cta-row">
+      <a href="#contact" class="btn-primary">Lets Build</a>
+      <a href="#services" class="btn-ghost">What I do &rarr;</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="stat">
+      <div class="stat-num">$300K+</div>
+      <div class="stat-label">Raised through network</div>
+      <div class="stat-divider"></div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">Web3</div>
+      <div class="stat-label">Native operator</div>
+      <div class="stat-divider"></div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">0&rarr;1</div>
+      <div class="stat-label">Early-stage specialist</div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <svg width="16" height="24" viewBox="0 0 16 24" fill="none">
+      <rect x="1" y="1" width="14" height="22" rx="7" stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="8" cy="8" r="2" fill="currentColor"/>
+    </svg>
+    scroll
+  </div>
+</section>
+
+<div class="marquee-wrap">
+  <div class="marquee">
+    <span class="marquee-item">Dealflow</span><span class="marquee-dot">&middot;</span>
+    <span class="marquee-item">Investor Relations</span><span class="marquee-dot">&middot;</span>
+    <span class="marquee-item">Launchpad Partnerships</span><span class="marquee-dot">&middot;</span>
+    <span class="marquee-item">Liquidity Strategy</span><span class="marquee-dot">&middot;</span>
+    <span class="marquee-item">Go-to-Market</span><span class="marquee-dot">&middot;</span>
+    <span class="marquee-item">VC Connections</span><span class="marquee-dot">&middot;</span>
+    <span class="marquee-item">Token Economics</span><span class="marquee-dot">&middot;</span>
+    <span class="marquee-item">Web3 Growth</span><span class="marquee-dot">&middot;</span>
+    <span class="marquee-item">Dealflow</span><span class="marquee-dot">&middot;</span>
+    <span class="marquee-item">Investor Relations</span><span class="marquee-dot">&middot;</span>
+    <span class="marquee-item">Launchpad Partnerships</span><span class="marquee-dot">&middot;</span>
+    <span class="marquee-item">Liquidity Strategy</span><span class="marquee-dot">&middot;</span>
+    <span class="marquee-item">Go-to-Market</span><span class="marquee-dot">&middot;</span>
+    <span class="marquee-item">VC Connections</span><span class="marquee-dot">&middot;</span>
+    <span class="marquee-item">Token Economics</span><span class="marquee-dot">&middot;</span>
+    <span class="marquee-item">Web3 Growth</span><span class="marquee-dot">&middot;</span>
+  </div>
+</div>
+
+<section id="services">
+  <div class="section-label">
+    <span class="section-label-line"></span>
+    What I do
+  </div>
+  <div class="section-title fade-in">Four ways I<br>move the needle</div>
+  <div class="services-grid">
+    <div class="service-card">
+      <span class="service-num">01</span>
+      <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+      <div class="service-name">Dealflow &amp; Investor Relations</div>
+      <p class="service-desc">Direct introductions to VCs, angels, and strategic investors. I do not blast your deck to a newsletter &mdash; I make targeted connections that lead to term sheets.</p>
+      <div class="service-card-underline"></div>
+    </div>
+    <div class="service-card">
+      <span class="service-num">02</span>
+      <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/>
+      </svg>
+      <div class="service-name">Business Development</div>
+      <p class="service-desc">Securing launchpad slots, exchange listings, and ecosystem partnerships that drive real visibility &mdash; not vanity metrics.</p>
+      <div class="service-card-underline"></div>
+    </div>
+    <div class="service-card">
+      <span class="service-num">03</span>
+      <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+      </svg>
+      <div class="service-name">Liquidity &amp; Market Strategy</div>
+      <p class="service-desc">Structuring market maker relationships and liquidity plans to keep your token economics healthy from day one.</p>
+      <div class="service-card-underline"></div>
+    </div>
+    <div class="service-card">
+      <span class="service-num">04</span>
+      <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+      </svg>
+      <div class="service-name">Ops &amp; Go-to-Market</div>
+      <p class="service-desc">Building the playbooks, timelines, and execution frameworks that turn a funded idea into a scaling protocol.</p>
+      <div class="service-card-underline"></div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="about">
+    <div class="about-quote fade-in">
+      I do not just open doors &mdash; I make sure deals get implemented and partnerships deliver results.
+    </div>
+    <div class="about-text fade-in">
+      <p>I am <strong>Babyv</strong>, founder of <strong>GrayMan Dealflows</strong> &mdash; a dealflow and growth agency built for Web3 and emerging tech projects that are serious about scaling.</p>
+      <p>Over the years I have embedded with <strong>founders, VCs, launchpads, and liquidity providers</strong> &mdash; not as a middleman, but as an operator. I have learned what actually moves a deal forward and what stalls it.</p>
+      <p>My edge is at the <strong>zero-to-one stage</strong> &mdash; where there is no playbook yet and you need someone who can build while the plane is still in the air.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="section-label" style="justify-content:center; margin-bottom:32px;">
+    <span class="section-label-line"></span>
+    Lets connect
+  </div>
+  <div class="contact-title fade-in">Ready to<br><span>build?</span></div>
+  <p class="contact-sub fade-in">Book a call. No pitch decks required upfront.</p>
+  <a href="https://t.me/babyv_nftea" class="btn-primary fade-in">Start the conversation</a>
+  <div class="contact-links fade-in">
+    <a href="mailto:babyvnft@gmail.com" class="contact-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Email
+    </a>
+    <a href="https://t.me/babyv_nftea" class="contact-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Telegram
+    </a>
+    <a href="https://twitter.com/babyv_nft" class="contact-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
+      Twitter
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Babyv</div>
+  <div class="footer-copy">&copy; 2025 GrayMan Dealflows &middot; All rights reserved</div>
+</footer>
+
+<script>
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.fade-in').forEach(function(el) { observer.observe(el); });
+window.addEventListener('load', function() {
+  var hl = document.querySelector('.hero-left');
+  if (hl) hl.classList.add('loaded');
+});
+</script>
+
+</body>
+</html>
